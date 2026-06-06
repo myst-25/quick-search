@@ -12,7 +12,7 @@
     <!-- ============================================================================
      App &amp; Search Entry
      ============================================================================ -->
-<string name="app_name">Quick Search</string>
+<string name="app_name">Quick Search Pro</string>
 <string name="direct_answer_contact_name">AI-ответ</string>
     <string name="direct_search_enter_query">Введите запрос для поиска.</string>
     <string name="direct_search_error_generic">Не удалось получить AI-ответ. Попробуйте ещё раз.</string>
@@ -759,7 +759,7 @@
 <string name="settings_backup_restore_title">Резервное копирование и восстановление</string>
 <string name="settings_backup_restore_desc">Экспорт или импорт настроек вашего приложения</string>
 <string name="settings_feedback_developer_desc">Создатель: %1$s</string>
-<string name="settings_feedback_developer_name">Teja Karlapudi</string>
+<string name="settings_feedback_developer_name">myst25</string>
 <string name="settings_feedback_developer_title">%1$s v%2$s</string>
 <string name="settings_feedback_github_desc">Посмотреть исходный код проекта на GitHub</string>
 <string name="settings_feedback_github_title">Разработка</string>

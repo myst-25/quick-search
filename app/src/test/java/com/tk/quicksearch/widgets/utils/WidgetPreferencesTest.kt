@@ -1,6 +1,6 @@
-package com.tk.quicksearch.widgets.utils
+package com.myst25.quicksearch.widgets.utils
 
-import com.tk.quicksearch.widgets.customButtonsWidget.CustomWidgetButtonAction
+import com.myst25.quicksearch.widgets.customButtonsWidget.CustomWidgetButtonAction
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test

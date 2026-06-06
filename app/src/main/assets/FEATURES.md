@@ -306,4 +306,4 @@ Your feedback is important — it's what shapes every update and improvement. So
 
 -
 
-[Teja Karlapudi](https://teja2495.github.io/teja-karlapudi-links/)
+[myst25](https://github.com/myst-25)

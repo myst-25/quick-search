@@ -1,7 +1,7 @@
-package com.tk.quicksearch.search.apps
+package com.myst25.quicksearch.search.apps
 
-import com.tk.quicksearch.search.fuzzy.FuzzySearchConfig
-import com.tk.quicksearch.search.models.AppInfo
+import com.myst25.quicksearch.search.fuzzy.FuzzySearchConfig
+import com.myst25.quicksearch.search.models.AppInfo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

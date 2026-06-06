@@ -3,7 +3,7 @@
     <!-- ============================================================================
          App &amp; Search Entry
          ============================================================================ -->
-    <string name="app_name">Quick Search</string>
+    <string name="app_name">Quick Search Pro</string>
     <string name="direct_answer_contact_name">AI Answer</string>
     <string name="direct_search_enter_query">Please enter a query to search.</string>
     <string name="direct_search_error_generic">Couldn\u2019t fetch AI answer. Try again.</string>
@@ -735,7 +735,7 @@
     <string name="settings_backup_restore_desc">Export or import your app settings</string>
     <string name="settings_backup_restore_title">Backup &amp; Restore</string>
     <string name="settings_feedback_developer_desc">Made by %1$s</string>
-    <string name="settings_feedback_developer_name">Teja Karlapudi</string>
+    <string name="settings_feedback_developer_name">myst25</string>
     <string name="settings_feedback_developer_title">%1$s v%2$s</string>
     <string name="settings_feedback_github_desc">View this project\'s source code on GitHub</string>
     <string name="settings_feedback_github_title">Development</string>

@@ -1,4 +1,4 @@
-package com.tk.quicksearch.tools.dateCalculator
+package com.myst25.quicksearch.tools.dateCalculator
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

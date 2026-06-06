@@ -12,7 +12,7 @@
     <!-- ============================================================================
          App &amp; Search Entry
          ============================================================================ -->
-    <string name="app_name">Quick Search</string>
+    <string name="app_name">Quick Search Pro</string>
     <string name="direct_answer_contact_name">Απάντηση AI</string>
     <string name="direct_search_enter_query">Παρακαλώ εισαγάγετε ένα ερώτημα για αναζήτηση.</string>
     <string name="direct_search_error_generic">Δεν ήταν δυνατή η ανάκτηση της απάντησης AI. Δοκιμάστε ξανά.</string>
@@ -743,7 +743,7 @@
     <string name="settings_backup_restore_desc">Εξαγωγή ή εισαγωγή των ρυθμίσεων της εφαρμογής σας</string>
     <string name="settings_backup_restore_title">Αντίγραφα ασφαλείας &amp; Επαναφορά</string>
     <string name="settings_feedback_developer_desc">Δημιουργήθηκε από τον %1$s</string>
-    <string name="settings_feedback_developer_name">Teja Karlapudi</string>
+    <string name="settings_feedback_developer_name">myst25</string>
     <string name="settings_feedback_developer_title">%1$s v%2$s</string>
     <string name="settings_feedback_github_desc">Δείτε τον πηγαίο κώδικα αυτού του έργου στο GitHub</string>
     <string name="settings_feedback_github_title">Ανάπτυξη</string>

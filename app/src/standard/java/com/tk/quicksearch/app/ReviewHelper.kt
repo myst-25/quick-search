@@ -1,9 +1,9 @@
-package com.tk.quicksearch.app
+package com.myst25.quicksearch.app
 
 import android.app.Activity
 import android.util.Log
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.tk.quicksearch.search.data.UserAppPreferences
+import com.myst25.quicksearch.search.data.UserAppPreferences
 
 /**
  * Utility class to handle in-app review flow using Google Play's ReviewManager API.

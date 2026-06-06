@@ -1,0 +1,114 @@
+package com.myst25.quicksearch.tools.aiSearch
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.myst25.quicksearch.R
+import com.myst25.quicksearch.search.core.WordClockState
+import com.myst25.quicksearch.search.core.WordClockStatus
+import com.myst25.quicksearch.shared.ui.theme.DesignTokens
+
+@Composable
+fun WordClockResult(
+        wordClockState: WordClockState,
+        llmProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
+        showWallpaperBackground: Boolean = false,
+        onGeminiModelInfoClick: () -> Unit = {},
+) {
+    if (wordClockState.status == WordClockStatus.Idle) return
+
+    val showAttribution =
+            wordClockState.status == WordClockStatus.Success &&
+                    !wordClockState.wordClockText.isNullOrBlank()
+
+    val copyText =
+            if (wordClockState.status == WordClockStatus.Success) {
+                wordClockState.wordClockText
+            } else {
+                null
+            }
+
+    GeminiResultCard(
+            showWallpaperBackground = showWallpaperBackground,
+            showAttribution = showAttribution,
+            usedModelId = wordClockState.usedModelId,
+            llmProviderId = llmProviderId,
+            isAttributionClickable = true,
+            onGeminiModelInfoClick = onGeminiModelInfoClick,
+            copyText = copyText,
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                    modifier = Modifier.fillMaxWidth().padding(DesignTokens.SpacingLarge),
+                    verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall),
+            ) {
+                when (wordClockState.status) {
+                    WordClockStatus.Loading -> {
+                        GeminiLoadingAnimation()
+                    }
+                    WordClockStatus.Success -> {
+                        val line1 = wordClockState.wordClockText.orEmpty()
+                        val placeLabel = wordClockState.placeText?.trim().orEmpty()
+                        val timeZoneLabel = wordClockState.timeZoneText?.trim().orEmpty()
+                        Column(
+                                modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                    text = line1,
+                                    style = MaterialTheme.typography.displaySmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            wordClockState.sourceTimeText?.takeIf { it.isNotBlank() }?.let { source ->
+                                Text(
+                                        text = source,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            if (placeLabel.isNotBlank() || timeZoneLabel.isNotBlank()) {
+                                Column(
+                                        modifier =
+                                                Modifier.padding(top = DesignTokens.SpacingSmall)
+                                                        .fillMaxWidth(),
+                                        verticalArrangement =
+                                                Arrangement.spacedBy(DesignTokens.SpacingXXSmall),
+                                ) {
+                                    placeLabel.takeIf { it.isNotBlank() }?.let { place ->
+                                        Text(
+                                                text = place,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    timeZoneLabel.takeIf { it.isNotBlank() }?.let { timezone ->
+                                        Text(
+                                                text = timezone,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    WordClockStatus.Error -> {
+                        Text(
+                                text = wordClockState.errorMessage
+                                        ?: stringResource(R.string.direct_search_error_generic),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                    WordClockStatus.Idle -> {}
+                }
+            }
+        }
+    }
+}

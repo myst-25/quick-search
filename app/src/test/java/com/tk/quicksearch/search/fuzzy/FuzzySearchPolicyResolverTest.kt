@@ -1,6 +1,6 @@
-package com.tk.quicksearch.search.fuzzy
+package com.myst25.quicksearch.search.fuzzy
 
-import com.tk.quicksearch.search.core.SearchSection
+import com.myst25.quicksearch.search.core.SearchSection
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

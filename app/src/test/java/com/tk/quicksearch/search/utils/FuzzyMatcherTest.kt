@@ -1,4 +1,4 @@
-package com.tk.quicksearch.search.utils
+package com.myst25.quicksearch.search.utils
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

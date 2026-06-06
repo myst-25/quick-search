@@ -11,7 +11,7 @@
     <!-- ============================================================================
          App &amp; Search Entry
          ============================================================================ -->
-    <string name="app_name">Quick Search</string>
+    <string name="app_name">Quick Search Pro</string>
     <string name="direct_answer_contact_name">Risposta AI</string>
     <string name="direct_search_enter_query">Inserisci una query per cercare.</string>
     <string name="direct_search_error_generic">Impossibile recuperare la risposta dell\u2019AI. Riprova.</string>
@@ -742,7 +742,7 @@
     <string name="settings_backup_restore_desc">Esporta o importa le impostazioni dell\u2019app</string>
     <string name="settings_backup_restore_title">Backup e ripristino</string>
     <string name="settings_feedback_developer_desc">Sviluppata da %1$s</string>
-    <string name="settings_feedback_developer_name">Teja Karlapudi</string>
+    <string name="settings_feedback_developer_name">myst25</string>
     <string name="settings_feedback_developer_title">%1$s v%2$s</string>
     <string name="settings_feedback_github_desc">Visualizza il codice sorgente di questo progetto su GitHub</string>
     <string name="settings_feedback_github_title">Sviluppo</string>

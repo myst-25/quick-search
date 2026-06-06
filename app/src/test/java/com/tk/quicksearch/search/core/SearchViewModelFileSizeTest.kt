@@ -1,4 +1,4 @@
-package com.tk.quicksearch.search.core
+package com.myst25.quicksearch.search.core
 
 import java.io.File
 import org.junit.Assert.assertTrue

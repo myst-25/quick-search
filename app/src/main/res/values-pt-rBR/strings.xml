@@ -12,7 +12,7 @@
     <!-- ============================================================================
          App &amp; Search Entry
          ============================================================================ -->
-    <string name="app_name">Quick Search</string>
+    <string name="app_name">Quick Search Pro</string>
     <string name="direct_answer_contact_name">Resposta da IA</string>
     <string name="direct_search_enter_query">Por favor, insira um termo para pesquisar.</string>
     <string name="direct_search_error_generic">Não foi possível obter a resposta da IA. Tente novamente.</string>
@@ -743,7 +743,7 @@
     <string name="settings_backup_restore_desc">Exporte ou importe as configurações do seu app</string>
     <string name="settings_backup_restore_title">Backup e Restauração</string>
     <string name="settings_feedback_developer_desc">Criado por %1$s</string>
-    <string name="settings_feedback_developer_name">Teja Karlapudi</string>
+    <string name="settings_feedback_developer_name">myst25</string>
     <string name="settings_feedback_developer_title">%1$s v%2$s</string>
     <string name="settings_feedback_github_desc">Veja o código-fonte deste projeto no GitHub</string>
     <string name="settings_feedback_github_title">Desenvolvimento</string>

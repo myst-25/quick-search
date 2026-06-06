@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tk.quicksearch"
+    namespace = "com.myst25.quicksearch"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.tk.quicksearch"
+        applicationId = "com.myst25.quicksearch"
         minSdk = 24
         targetSdk = 36
         versionCode = 65
@@ -37,7 +37,7 @@ android {
             isDebuggable = true
             isJniDebuggable = true
             isMinifyEnabled = false
-            resValue("string", "app_name", "QS Debug")
+            resValue("string", "app_name", "QS Pro Debug")
         }
         release {
             signingConfig = signingConfigs.getByName("debug")

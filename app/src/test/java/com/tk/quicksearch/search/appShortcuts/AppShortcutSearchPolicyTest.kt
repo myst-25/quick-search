@@ -1,6 +1,6 @@
-package com.tk.quicksearch.search.appShortcuts
+package com.myst25.quicksearch.search.appShortcuts
 
-import com.tk.quicksearch.search.utils.SearchQueryContext
+import com.myst25.quicksearch.search.utils.SearchQueryContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

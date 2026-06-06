@@ -1,0 +1,279 @@
+package com.myst25.quicksearch.search.core
+
+import com.myst25.quicksearch.search.data.AppShortcutRepository.StaticShortcut
+import com.myst25.quicksearch.search.data.preferences.UiPreferences
+import com.myst25.quicksearch.search.appSettings.AppSettingResult
+import com.myst25.quicksearch.search.deviceSettings.DeviceSetting
+import com.myst25.quicksearch.search.models.AppInfo
+import com.myst25.quicksearch.search.models.CalendarEventInfo
+import com.myst25.quicksearch.search.models.ContactInfo
+import com.myst25.quicksearch.search.models.DeviceFile
+import com.myst25.quicksearch.search.models.FileType
+import com.myst25.quicksearch.search.models.NoteInfo
+import com.myst25.quicksearch.search.searchHistory.RecentSearchItem
+import com.myst25.quicksearch.search.utils.RecentResultRankingUtils
+import com.myst25.quicksearch.tools.aiSearch.AiSearchLlmProviderId
+import com.myst25.quicksearch.tools.aiSearch.GeminiModelCatalog
+import com.myst25.quicksearch.tools.aiSearch.GeminiTextModel
+
+// =============================================================================
+// The four focused sub-state data classes that replace the monolithic
+// SearchUiState for internal ViewModel state management.
+//
+// WHY FOUR SEPARATE FLOWS?
+//   Before: every keystroke → full SearchUiState.copy() → 70+ fields copied.
+//   After:  every keystroke → only SearchResultsState.copy() → ~30 fields.
+//   SearchPermissionState, SearchFeatureState, SearchUiConfigState are only
+//   copied when the user visits settings pages — not during typing.
+//
+// BACKWARD COMPATIBILITY:
+//   SearchViewModel.uiState remains a single StateFlow<SearchUiState>, assembled
+//   by combine()-ing these four flows. All consumer files are unchanged.
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// 1. SearchResultsState — the HOT PATH. Updated on every keystroke.
+//    ~30 fields vs the original 70+.
+// ---------------------------------------------------------------------------
+
+data class SearchResultsState(
+        // Active query
+        val query: String = "",
+        // App results (updated by refreshDerivedState on each query change)
+        val recentApps: List<AppInfo> = emptyList(),
+        val newOrUpdatedApps: List<AppInfo> = emptyList(),
+        val mostUsedApps: List<AppInfo> = emptyList(),
+        val searchResults: List<AppInfo> = emptyList(),
+        // Optional staging buffer for app results.
+        // null = no staged results (normal write-through path).
+        val pendingSearchResults: List<AppInfo>? = null,
+        val pinnedApps: List<AppInfo> = emptyList(),
+        val pinnedNonAppItemOrder: List<String> = emptyList(),
+        val allApps: List<AppInfo> = emptyList(),
+        val suggestionExcludedApps: List<AppInfo> = emptyList(),
+        val resultExcludedApps: List<AppInfo> = emptyList(),
+        val indexedAppCount: Int = 0,
+        val cacheLastUpdatedMillis: Long = 0L,
+        // App shortcut results
+        val appShortcutResults: List<StaticShortcut> = emptyList(),
+        val allAppShortcuts: List<StaticShortcut> = emptyList(),
+        val pinnedAppShortcuts: List<StaticShortcut> = emptyList(),
+        val excludedAppShortcuts: List<StaticShortcut> = emptyList(),
+        // Contact results (debounced secondary search)
+        val contactResults: List<ContactInfo> = emptyList(),
+        val pinnedContacts: List<ContactInfo> = emptyList(),
+        val excludedContacts: List<ContactInfo> = emptyList(),
+        // File results (debounced secondary search)
+        val fileResults: List<DeviceFile> = emptyList(),
+        val pinnedFiles: List<DeviceFile> = emptyList(),
+        val excludedFiles: List<DeviceFile> = emptyList(),
+        // Settings results (debounced secondary search)
+        val settingResults: List<DeviceSetting> = emptyList(),
+        val appSettingResults: List<AppSettingResult> = emptyList(),
+        val allDeviceSettings: List<DeviceSetting> = emptyList(),
+        val pinnedSettings: List<DeviceSetting> = emptyList(),
+        val excludedSettings: List<DeviceSetting> = emptyList(),
+        // Calendar results (debounced secondary search)
+        val calendarEvents: List<CalendarEventInfo> = emptyList(),
+        val pinnedCalendarEvents: List<CalendarEventInfo> = emptyList(),
+        val excludedCalendarEvents: List<CalendarEventInfo> = emptyList(),
+        val todayCalendarEvents: List<CalendarEventInfo> = emptyList(),
+        // Notes results
+        val noteResults: List<NoteInfo> = emptyList(),
+        val pinnedNotes: List<NoteInfo> = emptyList(),
+        // Computed visibility states (derived from results above)
+        val screenState: ScreenVisibilityState = ScreenVisibilityState.Initializing,
+        val appsSectionState: AppsSectionVisibility = AppsSectionVisibility.Hidden,
+        val appShortcutsSectionState: AppShortcutsSectionVisibility =
+                AppShortcutsSectionVisibility.Hidden,
+        val contactsSectionState: ContactsSectionVisibility = ContactsSectionVisibility.Hidden,
+        val filesSectionState: FilesSectionVisibility = FilesSectionVisibility.Hidden,
+        val settingsSectionState: SettingsSectionVisibility = SettingsSectionVisibility.Hidden,
+        val calendarSectionState: CalendarSectionVisibility = CalendarSectionVisibility.Hidden,
+        val notesSectionState: NotesSectionVisibility = NotesSectionVisibility.Hidden,
+        val searchEnginesState: SearchEnginesVisibility = SearchEnginesVisibility.Hidden,
+        // Transient search state (calculator answer, AI search, web suggestions)
+        val calculatorState: CalculatorState = CalculatorState(),
+        val currencyConverterState: CurrencyConverterState = CurrencyConverterState(),
+        val wordClockState: WordClockState = WordClockState(),
+        val dictionaryState: DictionaryState = DictionaryState(),
+        val AiSearchState: AiSearchState = AiSearchState(),
+        val webSuggestions: List<String> = emptyList(),
+        val webSuggestionsLoading: Boolean = false,
+        val webSuggestionWasSelected: Boolean = false,
+        val isAppSearchInProgress: Boolean = false,
+        val isSecondarySearchInProgress: Boolean = false,
+        val detectedShortcutTarget: SearchTarget? = null,
+        val detectedAliasSearchSection: SearchSection? = null,
+        val isCurrencyConverterAliasMode: Boolean = false,
+        val isWordClockAliasMode: Boolean = false,
+        val isDictionaryAliasMode: Boolean = false,
+        val detectedCustomToolId: String? = null,
+        // Recent items (shown when query is blank)
+        val recentItems: List<RecentSearchItem> = emptyList(),
+        // Recently opened items filtered to the active alias section (shown when alias detected + query blank)
+        val aliasRecentItems: List<RecentSearchItem> = emptyList(),
+        val recentResultRecencyIndex: RecentResultRankingUtils.RecencyIndex =
+                RecentResultRankingUtils.RecencyIndex(),
+        // Cache invalidation counters
+        val nicknameUpdateVersion: Int = 0,
+        val contactActionsVersion: Int = 0,
+)
+
+// ---------------------------------------------------------------------------
+// 2. SearchPermissionState — updated only when the OS grants/revokes a perm.
+// ---------------------------------------------------------------------------
+
+data class SearchPermissionState(
+        val hasUsagePermission: Boolean = false,
+        val hasContactPermission: Boolean = false,
+        val hasFilePermission: Boolean = false,
+        val hasCalendarPermission: Boolean = false,
+        val hasCallPermission: Boolean = false,
+        val hasWallpaperPermission: Boolean = false,
+        val wallpaperAvailable: Boolean = false,
+        // Messaging / calling app selection (depends on installed apps)
+        val messagingApp: MessagingApp = MessagingApp.MESSAGES,
+        val callingApp: CallingApp = CallingApp.CALL,
+        val isWhatsAppInstalled: Boolean = false,
+        val isTelegramInstalled: Boolean = false,
+        val isSignalInstalled: Boolean = false,
+        val isGoogleMeetInstalled: Boolean = false,
+)
+
+// ---------------------------------------------------------------------------
+// 3. SearchFeatureState — updated only when the user changes settings pages.
+// ---------------------------------------------------------------------------
+
+data class SearchFeatureState(
+        // Search engine targets & configuration
+        val searchTargetsOrder: List<SearchTarget> = emptyList(),
+        val disabledSearchTargetIds: Set<String> = emptySet(),
+        val isSearchEngineCompactMode: Boolean = false,
+        val searchEngineCompactRowCount: Int = 1,
+        val isSearchEngineAliasSuffixEnabled: Boolean = true,
+        val isAliasTriggerAfterSpaceEnabled: Boolean = true,
+        val amazonDomain: String? = null,
+        // App shortcuts
+        val shortcutsEnabled: Boolean = true,
+        val shortcutCodes: Map<String, String> = emptyMap(),
+        val shortcutEnabled: Map<String, Boolean> = emptyMap(),
+        val disabledAppShortcutIds: Set<String> = emptySet(),
+        // Section visibility preferences (which sections are enabled/disabled)
+        val disabledSections: Set<SearchSection> = emptySet(),
+        // AI Search
+        val hasApiKey: Boolean = false,
+        val geminiApiKeyLast4: String? = null,
+        val llmApiKeyLast4ByProvider: Map<AiSearchLlmProviderId, String> = emptyMap(),
+        val customLlmBaseUrlByProvider: Map<AiSearchLlmProviderId, String> = emptyMap(),
+        val aiSearchLlmProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
+        val isSavingGeminiApiKey: Boolean = false,
+        val personalContext: String = "",
+        val geminiModel: String = GeminiModelCatalog.DEFAULT_MODEL_ID,
+        val geminiGroundingEnabled: Boolean = GeminiModelCatalog.DEFAULT_GROUNDING_ENABLED,
+        val geminiThinkingEnabled: Boolean = false,
+        val availableGeminiModels: List<GeminiTextModel> = GeminiModelCatalog.FALLBACK_TEXT_MODELS,
+        val availableLlmModelsByProvider: Map<AiSearchLlmProviderId, List<GeminiTextModel>> = emptyMap(),
+        // Web suggestions
+        val webSuggestionsEnabled: Boolean = true,
+        val webSuggestionsCount: Int = 3,
+        // Calculator
+        val calculatorEnabled: Boolean = true,
+        val unitConverterEnabled: Boolean = true,
+        val dateCalculatorEnabled: Boolean = true,
+        val currencyConverterEnabled: Boolean = true,
+        val wordClockEnabled: Boolean = true,
+        val dictionaryEnabled: Boolean = true,
+        // Custom tools
+        val customTools: List<CustomTool> = emptyList(),
+        val disabledCustomToolIds: Set<String> = emptySet(),
+        // Search history
+        val recentQueriesEnabled: Boolean = true,
+        val hasDismissedSearchHistoryTip: Boolean = false,
+        // Top matches
+        val topMatchesEnabled: Boolean = false,
+        val topMatchesLimit: Int = UiPreferences.DEFAULT_TOP_MATCHES_LIMIT,
+        val topMatchesSectionOrder: List<SearchSection> = UiPreferences.DEFAULT_TOP_MATCHES_SECTION_ORDER,
+        val disabledTopMatchesSections: Set<SearchSection> = emptySet(),
+        // Calendar
+        val showTodayEvents: Boolean = true,
+        // Direct dial
+        val directDialEnabled: Boolean = false,
+        // Assistant launch voice mode
+        val assistantLaunchVoiceModeEnabled: Boolean = false,
+        // Usage permission banner
+        val shouldShowUsagePermissionBanner: Boolean = false,
+)
+
+// ---------------------------------------------------------------------------
+// 4. SearchUiConfigState — updated only on display preference changes.
+// ---------------------------------------------------------------------------
+
+data class SearchUiConfigState(
+        // Lifecycle / loading coarse state
+        val startupPhase: StartupPhase = StartupPhase.PHASE_1_CACHE_PREFS,
+        val isInitializing: Boolean = true,
+        val isLoading: Boolean = true,
+        val errorMessage: String? = null,
+        val isStartupCoreSurfaceReady: Boolean = false,
+        // Wallpaper / background appearance
+        val showWallpaperBackground: Boolean = false,
+        val wallpaperBackgroundAlpha: Float = UiPreferences.DEFAULT_WALLPAPER_BACKGROUND_ALPHA,
+        val wallpaperBlurRadius: Float = UiPreferences.DEFAULT_WALLPAPER_BLUR_RADIUS,
+        val appTheme: AppTheme = AppTheme.MONOCHROME,
+        val overlayThemeIntensity: Float = UiPreferences.DEFAULT_OVERLAY_THEME_INTENSITY,
+        val appThemeMode: AppThemeMode = AppThemeMode.SYSTEM,
+        val backgroundSource: BackgroundSource = BackgroundSource.THEME,
+        val customImageUri: String? = null,
+        val startupBackgroundPreviewPath: String? = null,
+        // Layout preferences
+        val overlayModeEnabled: Boolean = false,
+        val oneHandedMode: Boolean = false,
+        val bottomSearchBarEnabled: Boolean = false,
+        val searchHintsEnabled: Boolean = true,
+        val settingsIconEnabled: Boolean = true,
+        val topResultIndicatorEnabled: Boolean = true,
+        val openKeyboardOnLaunch: Boolean = true,
+        val clearQueryOnLaunch: Boolean = true,
+        val autoCloseOverlay: Boolean = true,
+        val selectRetainedQuery: Boolean = false,
+        val fontScaleMultiplier: Float = UiPreferences.DEFAULT_FONT_SCALE_MULTIPLIER,
+        val useSystemFont: Boolean = false,
+        // App display preferences
+        val showAppLabels: Boolean = true,
+        val phoneAppGridColumns: Int = com.myst25.quicksearch.search.data.preferences.UiPreferences.DEFAULT_PHONE_APP_GRID_COLUMNS,
+        val appIconSizeStep: Int = com.myst25.quicksearch.search.data.preferences.UiPreferences.DEFAULT_APP_ICON_SIZE_STEP,
+        val appIconShape: AppIconShape = AppIconShape.DEFAULT,
+        val launcherAppIcon: LauncherAppIcon = LauncherAppIcon.DEFAULT,
+        val themedIconsEnabled: Boolean = true,
+        val deviceThemeEnabled: Boolean = false,
+        val wallpaperAccentEnabled: Boolean = true,
+        val appSuggestionsEnabled: Boolean = true,
+        val selectedAppSuggestionTab: AppSuggestionTabType = AppSuggestionTabType.RECENTS,
+        val enabledAppSuggestionTabs: Set<AppSuggestionTabType> = AppSuggestionTabType.DefaultEnabledTabs,
+        val selectedIconPackPackage: String? = null,
+        val availableIconPacks: List<IconPackInfo> = emptyList(),
+        val maskUnsupportedIconPackIcons: Boolean = false,
+        // File display preferences
+        val enabledFileTypes: Set<FileType> = FileType.values().toSet(),
+        val showFolders: Boolean = false,
+        val showSystemFiles: Boolean = false,
+        val folderWhitelistPatterns: Set<String> = emptySet(),
+        val folderBlacklistPatterns: Set<String> = emptySet(),
+        val excludedFileExtensions: Set<String> = emptySet(),
+        // Onboarding, hints, and dialog visibility
+        val showSearchEngineOnboarding: Boolean = false,
+        val showStartSearchingOnOnboarding: Boolean = false,
+        val showSearchBarWelcomeAnimation: Boolean = false,
+        val showContactActionHint: Boolean = false,
+        val hasSeenOverlayAssistantTip: Boolean = true,
+        val showReleaseNotesDialog: Boolean = false,
+        val releaseNotesVersionName: String? = null,
+        // Transient dialog state (ephemeral UI overlays unrelated to search query)
+        val phoneNumberSelection: PhoneNumberSelection? = null,
+        val directDialChoice: DirectDialChoice? = null,
+        val contactMethodsBottomSheet: ContactInfo? = null,
+        val contactActionPickerRequest: ContactActionPickerRequest? = null,
+        val pendingDirectCallNumber: String? = null,
+        val pendingThirdPartyCall: PendingThirdPartyCall? = null,
+)

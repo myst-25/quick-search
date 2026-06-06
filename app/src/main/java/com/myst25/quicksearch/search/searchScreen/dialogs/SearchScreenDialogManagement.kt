@@ -1,0 +1,275 @@
+package com.myst25.quicksearch.search.searchScreen.dialogs
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.myst25.quicksearch.R
+import com.myst25.quicksearch.search.contacts.dialogs.ContactActionsPopup
+import com.myst25.quicksearch.search.contacts.dialogs.ContactActionsPopupState
+import com.myst25.quicksearch.search.contacts.models.ContactCardAction
+import com.myst25.quicksearch.search.contacts.dialogs.DirectDialChoiceDialog
+import com.myst25.quicksearch.search.contacts.dialogs.PhoneNumberSelectionDialog
+import com.myst25.quicksearch.search.core.*
+import com.myst25.quicksearch.search.data.AppShortcutRepository.StaticShortcut
+import com.myst25.quicksearch.search.data.AppShortcutRepository.shortcutKey
+import com.myst25.quicksearch.search.deviceSettings.DeviceSetting
+import com.myst25.quicksearch.search.models.AppInfo
+import com.myst25.quicksearch.search.models.CalendarEventInfo
+import com.myst25.quicksearch.search.models.ContactInfo
+import com.myst25.quicksearch.search.models.ContactMethod
+import com.myst25.quicksearch.search.models.DeviceFile
+import com.myst25.quicksearch.search.models.NoteInfo
+
+/**
+ * Composable that manages all dialogs for SearchScreen
+ */
+@Composable
+internal fun SearchScreenDialogs(
+    state: SearchUiState,
+    nicknameDialogState: NicknameDialogState?,
+    triggerDialogState: TriggerDialogState?,
+    onPhoneNumberSelected: (String, Boolean) -> Unit,
+    onDismissPhoneNumberSelection: () -> Unit,
+    onDirectDialChoiceSelected: (DirectDialOption, Boolean) -> Unit,
+    onDismissDirectDialChoice: () -> Unit,
+    onContactMethodClick: (ContactInfo, com.myst25.quicksearch.search.models.ContactMethod) -> Unit,
+    getContactActionTrigger: (Long, com.myst25.quicksearch.search.contacts.models.ContactCardAction) -> com.myst25.quicksearch.search.data.preferences.ResultTrigger?,
+    onContactActionTriggerClick: (ContactInfo, com.myst25.quicksearch.search.contacts.models.ContactCardAction, String) -> Unit,
+    onDismissContactMethods: () -> Unit,
+    onReleaseNotesAcknowledged: () -> Unit,
+    onReleaseNotesViewAllFeatures: () -> Unit,
+    onDismissNicknameDialog: () -> Unit,
+    onDismissTriggerDialog: () -> Unit,
+    onSaveAppNickname: (AppInfo, String?) -> Unit,
+    onSaveAppShortcutNickname: (StaticShortcut, String?) -> Unit,
+    onSaveContactNickname: (ContactInfo, String?) -> Unit,
+    onSaveFileNickname: (DeviceFile, String?) -> Unit,
+    onSaveSettingNickname: (DeviceSetting, String?) -> Unit,
+    onSaveCalendarEventNickname: (CalendarEventInfo, String?) -> Unit,
+    onSaveAppTrigger: (AppInfo, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    onSaveAppShortcutTrigger: (StaticShortcut, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    onSaveContactTrigger: (ContactInfo, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    onSaveContactActionTrigger: (ContactInfo, com.myst25.quicksearch.search.contacts.models.ContactCardAction, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    onSaveFileTrigger: (DeviceFile, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    onSaveSettingTrigger: (DeviceSetting, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    onSaveNoteTrigger: (NoteInfo, com.myst25.quicksearch.search.data.preferences.ResultTrigger?) -> Unit,
+    getAllTriggerWordsById: () -> Map<String, String>,
+    getAllAliasWordsById: () -> Map<String, String>,
+    getLastShownPhoneNumber: (Long) -> String?,
+    setLastShownPhoneNumber: (Long, String) -> Unit,
+) {
+    // Phone number selection dialog
+    state.phoneNumberSelection?.let { selection ->
+        PhoneNumberSelectionDialog(
+            contactInfo = selection.contactInfo,
+            isCall = selection.isCall,
+            onPhoneNumberSelected = onPhoneNumberSelected,
+            onDismiss = onDismissPhoneNumberSelection,
+        )
+    }
+
+    state.directDialChoice?.let { choice ->
+        DirectDialChoiceDialog(
+            contactName = choice.contactName,
+            phoneNumber = choice.phoneNumber,
+            onSelectOption = onDirectDialChoiceSelected,
+            onDismiss = onDismissDirectDialChoice,
+        )
+    }
+
+    // Contact methods dialog
+    state.contactMethodsBottomSheet?.let { contactInfo ->
+        val viewInContactsLabel = stringResource(R.string.contact_method_view_in_contacts_label)
+        ContactActionsPopup(
+            state =
+                ContactActionsPopupState.ContactActions(
+                    contactInfo = contactInfo,
+                    onContactMethodClick = onContactMethodClick,
+                    onAvatarClick = { contact ->
+                        onContactMethodClick(contact, ContactMethod.ViewInContactsApp(viewInContactsLabel))
+                    },
+                    enableContactActionTriggers = true,
+                    getContactActionTrigger = { contact, action ->
+                        getContactActionTrigger(contact.contactId, action)
+                    },
+                    onContactActionTriggerClick = onContactActionTriggerClick,
+                ),
+            getLastShownPhoneNumber = getLastShownPhoneNumber,
+            setLastShownPhoneNumber = setLastShownPhoneNumber,
+            onDismiss = onDismissContactMethods,
+        )
+    }
+
+    if (state.showReleaseNotesDialog) {
+        ReleaseNotesDialog(
+            versionName = state.releaseNotesVersionName,
+            onAcknowledge = onReleaseNotesAcknowledged,
+            onViewAllFeatures = onReleaseNotesViewAllFeatures,
+        )
+    }
+
+    // Nickname dialog
+    nicknameDialogState?.let { dialogState ->
+        when (dialogState) {
+            is NicknameDialogState.App -> {
+                NicknameDialog(
+                    currentNickname = dialogState.currentNickname,
+                    itemName = dialogState.itemName,
+                    onSave = { nickname ->
+                        onSaveAppNickname(dialogState.app, nickname)
+                    },
+                    onDismiss = onDismissNicknameDialog,
+                )
+            }
+
+            is NicknameDialogState.AppShortcut -> {
+                NicknameDialog(
+                    currentNickname = dialogState.currentNickname,
+                    itemName = dialogState.itemName,
+                    onSave = { nickname ->
+                        onSaveAppShortcutNickname(dialogState.shortcut, nickname)
+                    },
+                    onDismiss = onDismissNicknameDialog,
+                )
+            }
+
+            is NicknameDialogState.Contact -> {
+                NicknameDialog(
+                    currentNickname = dialogState.currentNickname,
+                    itemName = dialogState.itemName,
+                    onSave = { nickname ->
+                        onSaveContactNickname(dialogState.contact, nickname)
+                    },
+                    onDismiss = onDismissNicknameDialog,
+                )
+            }
+
+            is NicknameDialogState.File -> {
+                NicknameDialog(
+                    currentNickname = dialogState.currentNickname,
+                    itemName = dialogState.itemName,
+                    onSave = { nickname ->
+                        onSaveFileNickname(dialogState.file, nickname)
+                    },
+                    onDismiss = onDismissNicknameDialog,
+                )
+            }
+
+            is NicknameDialogState.Setting -> {
+                NicknameDialog(
+                    currentNickname = dialogState.currentNickname,
+                    itemName = dialogState.itemName,
+                    onSave = { nickname ->
+                        onSaveSettingNickname(dialogState.setting, nickname)
+                    },
+                    onDismiss = onDismissNicknameDialog,
+                )
+            }
+
+            is NicknameDialogState.CalendarEvent -> {
+                NicknameDialog(
+                    currentNickname = dialogState.currentNickname,
+                    itemName = dialogState.itemName,
+                    onSave = { nickname ->
+                        onSaveCalendarEventNickname(dialogState.event, nickname)
+                    },
+                    onDismiss = onDismissNicknameDialog,
+                )
+            }
+        }
+    }
+
+    triggerDialogState?.let { dialogState ->
+        val allTriggerWords = getAllTriggerWordsById()
+        val allAliasWords = getAllAliasWordsById()
+        when (dialogState) {
+            is TriggerDialogState.App ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys { it != "app:${dialogState.app.packageName}" }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = { onSaveAppTrigger(dialogState.app, it) },
+                    onDismiss = onDismissTriggerDialog,
+                )
+            is TriggerDialogState.AppShortcut ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys { it != "shortcut:${shortcutKey(dialogState.shortcut)}" }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = { onSaveAppShortcutTrigger(dialogState.shortcut, it) },
+                    onDismiss = onDismissTriggerDialog,
+                )
+            is TriggerDialogState.Contact ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys { it != "contact:${dialogState.contact.contactId}" }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = { onSaveContactTrigger(dialogState.contact, it) },
+                    onDismiss = onDismissTriggerDialog,
+                )
+            is TriggerDialogState.ContactAction ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys {
+                                it != "contactAction:${dialogState.contact.contactId}:${dialogState.action.toSerializedString()}"
+                            }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = {
+                        onSaveContactActionTrigger(dialogState.contact, dialogState.action, it)
+                    },
+                    onDismiss = onDismissTriggerDialog,
+                )
+            is TriggerDialogState.File ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys { it != "file:${dialogState.file.uri}" }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = { onSaveFileTrigger(dialogState.file, it) },
+                    onDismiss = onDismissTriggerDialog,
+                )
+            is TriggerDialogState.Setting ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys { it != "setting:${dialogState.setting.id}" }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = { onSaveSettingTrigger(dialogState.setting, it) },
+                    onDismiss = onDismissTriggerDialog,
+                )
+            is TriggerDialogState.Note ->
+                TriggerDialog(
+                    currentTrigger = dialogState.currentTrigger,
+                    itemName = dialogState.itemName,
+                    existingTriggerWords =
+                        allTriggerWords
+                            .filterKeys { it != "note:${dialogState.note.noteId}" }
+                            .values,
+                    existingAliasWords = allAliasWords.values,
+                    onSave = { onSaveNoteTrigger(dialogState.note, it) },
+                    onDismiss = onDismissTriggerDialog,
+                )
+        }
+    }
+}

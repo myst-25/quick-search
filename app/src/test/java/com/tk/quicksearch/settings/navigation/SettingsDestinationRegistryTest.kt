@@ -1,4 +1,4 @@
-package com.tk.quicksearch.settings.settingsDetailScreen
+package com.myst25.quicksearch.settings.settingsDetailScreen
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

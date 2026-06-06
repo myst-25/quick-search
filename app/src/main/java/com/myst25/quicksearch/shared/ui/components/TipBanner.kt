@@ -1,0 +1,142 @@
+package com.myst25.quicksearch.shared.ui.components
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
+import com.myst25.quicksearch.R
+import com.myst25.quicksearch.shared.ui.theme.AppColors
+import com.myst25.quicksearch.shared.ui.theme.DesignTokens
+
+/**
+ * Common tip banner component for displaying dismissible tips and hints throughout the app.
+ *
+ * Supports both plain text and annotated text with links.
+ *
+ * @param text The text content to display
+ * @param annotatedText Optional annotated text with styling/links (takes precedence over text if provided)
+ * @param icon Optional leading icon to display before the text
+ * @param onContentClick Optional click handler for the content area (for plain text)
+ * @param onContentLongClick Optional long-press handler for the content area
+ * @param onTextClick Optional click handler for annotated text (receives click offset)
+ * @param onDismiss Callback when the dismiss button is clicked
+ * @param modifier Modifier to be applied to the banner
+ * @param textStyle Text style to use (defaults to bodyMedium)
+ */
+@Composable
+fun TipBanner(
+    text: String? = null,
+    annotatedText: AnnotatedString? = null,
+    icon: ImageVector? = null,
+    onContentClick: (() -> Unit)? = null,
+    onContentLongClick: (() -> Unit)? = null,
+    onTextClick: ((Int) -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null,
+    showDismissButton: Boolean = true,
+    modifier: Modifier = Modifier,
+    textStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyMedium,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                shape = DesignTokens.ShapeXXLarge,
+            ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+            ),
+        shape = DesignTokens.ShapeXXLarge,
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+
+            val contentModifier =
+                Modifier.weight(1f).let { mod ->
+                    val withLongClick =
+                        if (onContentLongClick != null) {
+                            mod.pointerInput(Unit) {
+                                detectTapGestures(onLongPress = { onContentLongClick.invoke() })
+                            }
+                        } else mod
+                    if (onContentClick != null) {
+                        withLongClick.clickable(onClick = onContentClick)
+                    } else {
+                        withLongClick
+                    }
+                }
+
+            if (annotatedText != null) {
+                @Suppress("DEPRECATION")
+                ClickableText(
+                    text = annotatedText,
+                    style = textStyle.copy(color = MaterialTheme.colorScheme.onSurface),
+                    modifier = contentModifier,
+                    onClick = { offset ->
+                        if (onContentClick != null) {
+                            onContentClick()
+                        } else {
+                            onTextClick?.invoke(offset)
+                        }
+                    },
+                )
+            } else if (text != null) {
+                Text(
+                    text = text,
+                    style = textStyle,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = contentModifier,
+                )
+            }
+
+            // Dismiss button (optional)
+            if (showDismissButton && onDismiss != null) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.common_close),
+                        tint = AppColors.Accent,
+                    )
+                }
+            }
+        }
+    }
+}

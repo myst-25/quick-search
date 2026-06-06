@@ -11,7 +11,7 @@
 <!-- ============================================================================
      App &amp; Search Entry
      ============================================================================ -->
-<string name="app_name">Quick Search</string>
+<string name="app_name">Quick Search Pro</string>
 <string name="direct_answer_contact_name">AI Yanıtı</string>
 <string name="direct_search_enter_query">Lütfen aramak için bir sorgu girin.</string>
 <string name="direct_search_error_generic">AI yanıtı alınamadı. Tekrar deneyin.</string>
@@ -742,7 +742,7 @@
 <string name="settings_backup_restore_desc">Uygulama ayarlarını dışa aktar veya içe aktar</string>
 <string name="settings_backup_restore_title">Yedekle &amp; Geri yükle</string>
 <string name="settings_feedback_developer_desc">%1$s tarafından geliştirildi</string>
-<string name="settings_feedback_developer_name">Teja Karlapudi</string>
+<string name="settings_feedback_developer_name">myst25</string>
 <string name="settings_feedback_developer_title">%1$s v%2$s</string>
 <string name="settings_feedback_github_desc">Bu projenin kaynak kodunu GitHub\'da görüntüle</string>
 <string name="settings_feedback_github_title">Geliştirme</string>

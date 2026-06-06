@@ -1,6 +1,6 @@
-package com.tk.quicksearch.search.contacts
+package com.myst25.quicksearch.search.contacts
 
-import com.tk.quicksearch.search.utils.SearchQueryContext
+import com.myst25.quicksearch.search.utils.SearchQueryContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

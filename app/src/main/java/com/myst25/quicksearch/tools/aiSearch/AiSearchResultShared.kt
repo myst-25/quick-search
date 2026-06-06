@@ -1,0 +1,326 @@
+package com.myst25.quicksearch.tools.aiSearch
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Calculate
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.Straighten
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
+import com.myst25.quicksearch.R
+import com.myst25.quicksearch.search.core.SearchToolType
+import com.myst25.quicksearch.search.searchScreen.shared.InformationCard
+import com.myst25.quicksearch.shared.ui.theme.AppColors
+import com.myst25.quicksearch.shared.ui.theme.DesignTokens
+
+@Composable
+internal fun GeminiResultCard(
+        showWallpaperBackground: Boolean,
+        showAttribution: Boolean,
+        usedModelId: String?,
+        llmProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
+        isAttributionClickable: Boolean = false,
+        onGeminiModelInfoClick: () -> Unit = {},
+        onOpenAiSearchConfigure: () -> Unit = {},
+        copyText: String? = null,
+        content: @Composable () -> Unit,
+) {
+    ColumnWithContent(
+            showWallpaperBackground = showWallpaperBackground,
+            content = content,
+            showAttribution = showAttribution,
+            usedModelId = usedModelId,
+            llmProviderId = llmProviderId,
+            isAttributionClickable = isAttributionClickable,
+            onGeminiModelInfoClick = onGeminiModelInfoClick,
+            onOpenAiSearchConfigure = onOpenAiSearchConfigure,
+            copyText = copyText,
+    )
+}
+
+@Composable
+private fun ColumnWithContent(
+        showWallpaperBackground: Boolean,
+        content: @Composable () -> Unit,
+        showAttribution: Boolean,
+        usedModelId: String?,
+        llmProviderId: AiSearchLlmProviderId,
+        isAttributionClickable: Boolean,
+        onGeminiModelInfoClick: () -> Unit,
+        onOpenAiSearchConfigure: () -> Unit,
+        copyText: String?,
+) {
+    @Suppress("DEPRECATION")
+    val clipboardManager = LocalClipboardManager.current
+    val cardModifier =
+            Modifier.fillMaxWidth()
+                    .heightIn(min = 175.dp)
+                    .let { baseModifier ->
+                        if (copyText.isNullOrBlank()) {
+                            baseModifier
+                        } else {
+                            baseModifier.combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {
+                                        clipboardManager.setText(AnnotatedString(copyText))
+                                    },
+                            )
+                        }
+                    }
+
+    androidx.compose.foundation.layout.Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.SpacingSmall),
+    ) {
+        InformationCard(
+                modifier = cardModifier,
+                showWallpaperBackground = showWallpaperBackground,
+        ) {
+            content()
+        }
+
+        if (showAttribution) {
+            GeminiAttributionRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    usedModelId = usedModelId,
+                    llmProviderId = llmProviderId,
+                    isClickable = isAttributionClickable,
+                    onClick = onGeminiModelInfoClick,
+                    onLongClick = onOpenAiSearchConfigure,
+            )
+        }
+    }
+}
+
+@Composable
+private fun informationAttributionContentColor(): Color =
+    AppColors.wallpaperAwareMutedSearchForeground(alpha = 1f)
+
+@Composable
+private fun AnthropicClaudeWordmark(
+        contentDescription: String,
+        modifier: Modifier = Modifier,
+        wordmarkTextColor: Color,
+) {
+    Box(modifier = modifier) {
+        Image(
+                painter = painterResource(R.drawable.claude_wordmark_mark),
+                contentDescription = contentDescription,
+                contentScale = ContentScale.Fit,
+                colorFilter = null,
+                modifier = Modifier.fillMaxSize(),
+        )
+        Image(
+                painter = painterResource(R.drawable.claude_wordmark_type),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(wordmarkTextColor),
+                modifier = Modifier.fillMaxSize(),
+        )
+    }
+}
+
+@Composable
+private fun GeminiWordmark(
+        contentDescription: String,
+        modifier: Modifier = Modifier,
+        wordmarkTextColor: Color,
+) {
+    Box(modifier = modifier) {
+        Image(
+                painter = painterResource(R.drawable.gemini_wordmark_mark),
+                contentDescription = contentDescription,
+                contentScale = ContentScale.Fit,
+                colorFilter = null,
+                modifier = Modifier.fillMaxSize(),
+        )
+        Image(
+                painter = painterResource(R.drawable.gemini_wordmark_type),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(wordmarkTextColor),
+                modifier = Modifier.fillMaxSize(),
+        )
+    }
+}
+
+@Composable
+private fun GemmaWordmark(
+        contentDescription: String,
+        modifier: Modifier = Modifier,
+        wordmarkTextColor: Color,
+) {
+    Box(modifier = modifier) {
+        Image(
+                painter = painterResource(R.drawable.gemma_wordmark_mark),
+                contentDescription = contentDescription,
+                contentScale = ContentScale.Fit,
+                colorFilter = null,
+                modifier = Modifier.fillMaxSize(),
+        )
+        Image(
+                painter = painterResource(R.drawable.gemma_wordmark_type),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(wordmarkTextColor),
+                modifier = Modifier.fillMaxSize(),
+        )
+    }
+}
+
+/** Attribution row showing powered by Gemini, Gemma, OpenAI, Claude, or Groq branding. */
+@Composable
+internal fun GeminiAttributionRow(
+        modifier: Modifier = Modifier,
+        usedModelId: String? = null,
+        llmProviderId: AiSearchLlmProviderId = AiSearchLlmProviderId.GEMINI,
+        isClickable: Boolean = false,
+        onClick: () -> Unit = {},
+        onLongClick: () -> Unit = {},
+) {
+    val contentColor = informationAttributionContentColor()
+    val poweredByText = stringResource(R.string.direct_search_powered_by)
+    val isGemma = usedModelId?.lowercase()?.startsWith("gemma-") == true
+    val rowModifier =
+            if (isClickable) {
+                modifier
+                        .padding(horizontal = DesignTokens.SpacingLarge)
+                        .combinedClickable(
+                                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                                indication = null,
+                                onClick = onClick,
+                                onLongClick = onLongClick,
+                        )
+            } else {
+                modifier.padding(horizontal = DesignTokens.SpacingLarge)
+            }
+    Row(
+            modifier = rowModifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(
+                text = poweredByText,
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor,
+        )
+        when (llmProviderId) {
+            AiSearchLlmProviderId.OPENAI -> {
+                Image(
+                        painter = painterResource(R.drawable.openai_wordmark),
+                        contentDescription = poweredByText,
+                        contentScale = ContentScale.Fit,
+                        colorFilter = ColorFilter.tint(contentColor),
+                        modifier =
+                                Modifier.height(18.dp).aspectRatio(1564.3f / 428.4f),
+                )
+            }
+            AiSearchLlmProviderId.ANTHROPIC -> {
+                AnthropicClaudeWordmark(
+                        contentDescription = poweredByText,
+                        wordmarkTextColor = contentColor,
+                        modifier =
+                                Modifier.height(18.dp)
+                                        .aspectRatio(689.97997f / 148.17999f),
+                )
+            }
+            AiSearchLlmProviderId.GROQ -> {
+                Image(
+                        painter = painterResource(R.drawable.groq_wordmark),
+                        contentDescription = poweredByText,
+                        contentScale = ContentScale.Fit,
+                        colorFilter = ColorFilter.tint(contentColor),
+                        modifier =
+                                Modifier.height(18.dp).aspectRatio(152f / 55.5f),
+                )
+            }
+            else -> {
+                if (llmProviderId.isCustom) {
+                    Text(
+                            text = usedModelId.orEmpty(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = contentColor,
+                    )
+                } else {
+                    val logoAspectRatio = if (isGemma) 250f / 64f else 288f / 65f
+                    val logoHeight = if (isGemma) 18.dp else 14.dp
+                    if (isGemma) {
+                        GemmaWordmark(
+                                contentDescription = poweredByText,
+                                wordmarkTextColor = contentColor,
+                                modifier = Modifier.height(logoHeight).aspectRatio(logoAspectRatio),
+                        )
+                    } else {
+                        GeminiWordmark(
+                                contentDescription = poweredByText,
+                                wordmarkTextColor = contentColor,
+                                modifier = Modifier.height(logoHeight).aspectRatio(logoAspectRatio),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Attribution row showing calculator branding. */
+@Composable
+internal fun CalculatorAttributionRow(
+        modifier: Modifier = Modifier,
+        toolType: SearchToolType = SearchToolType.CALCULATOR,
+) {
+    val contentColor = informationAttributionContentColor()
+    val titleRes =
+            when (toolType) {
+                SearchToolType.UNIT_CONVERTER -> R.string.unit_converter_info_title
+                SearchToolType.DATE_CALCULATOR -> R.string.date_calculator_info_title
+                else -> R.string.calculator_toggle_title
+            }
+    val icon =
+            when (toolType) {
+                SearchToolType.UNIT_CONVERTER -> Icons.Rounded.Straighten
+                SearchToolType.DATE_CALCULATOR -> Icons.Rounded.CalendarMonth
+                else -> Icons.Rounded.Calculate
+            }
+    Row(
+            modifier = modifier.padding(horizontal = DesignTokens.SpacingLarge),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Icon(
+                imageVector = icon,
+                contentDescription = stringResource(titleRes),
+                tint = contentColor,
+                modifier = Modifier.size(14.dp),
+        )
+        Text(
+                text = stringResource(titleRes),
+                style = MaterialTheme.typography.labelSmall,
+                color = contentColor,
+        )
+    }
+}

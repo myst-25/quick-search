@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tk.quicksearch.benchmark"
+    namespace = "com.myst25.quicksearch.benchmark"
     compileSdk = 36
 
     defaultConfig {

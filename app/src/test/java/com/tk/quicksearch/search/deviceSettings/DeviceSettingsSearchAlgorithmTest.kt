@@ -1,6 +1,6 @@
-package com.tk.quicksearch.search.deviceSettings
+package com.myst25.quicksearch.search.deviceSettings
 
-import com.tk.quicksearch.search.utils.SearchQueryContext
+import com.myst25.quicksearch.search.utils.SearchQueryContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

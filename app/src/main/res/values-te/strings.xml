@@ -12,7 +12,7 @@
     <!-- ============================================================================
          App &amp; Search Entry
          ============================================================================ -->
-    <string name="app_name">Quick Search</string>
+    <string name="app_name">Quick Search Pro</string>
     <string name="direct_answer_contact_name">AI సమాధానం</string>
     <string name="direct_search_enter_query">దయచేసి శోధించడానికి ఒక ప్రశ్నను నమోదు చేయండి.</string>
     <string name="direct_search_error_generic">AI సమాధానాన్ని పొందలేకపోయాము. మళ్ళీ ప్రయత్నించండి.</string>
