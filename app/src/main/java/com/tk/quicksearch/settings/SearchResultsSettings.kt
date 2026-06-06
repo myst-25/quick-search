@@ -256,7 +256,7 @@ private fun AppSuggestionTabCheckboxes(
             AppSuggestionTabType.PINNED to stringResource(R.string.app_suggestions_tab_pinned),
             AppSuggestionTabType.RECENTS to stringResource(R.string.app_suggestions_tab_recent),
             AppSuggestionTabType.NEW_UPDATED to stringResource(R.string.app_suggestions_tab_new_updated),
-            AppSuggestionTabType.MOST_USED to stringResource(R.string.common_most_used),
+            AppSuggestionTabType.ALL_APPS to stringResource(R.string.common_all_apps),
         )
     val rows = configurableTabs.chunked(2)
 

@@ -292,6 +292,7 @@ data class ContactsSectionParams(
 /** Data class for Apps section parameters */
 data class AppsSectionParams(
     val apps: List<AppInfo>,
+    val allApps: List<AppInfo>,
     val pinnedAndRecentApps: List<AppInfo>,
     val pinnedApps: List<AppInfo>,
     val newOrUpdatedApps: List<AppInfo>,
@@ -842,6 +843,7 @@ internal fun buildSectionParams(
     val appsParams =
         AppsSectionParams(
             apps = derivedState.displayApps,
+            allApps = state.allApps,
             pinnedAndRecentApps = derivedState.pinnedAndRecentApps,
             pinnedApps = state.pinnedApps,
             newOrUpdatedApps = derivedState.newOrUpdatedApps,

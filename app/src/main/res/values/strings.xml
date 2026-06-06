@@ -96,9 +96,11 @@
     <string name="common_ai_provider">AI Provider</string>
     <string name="common_api_key_setup">API Key Setup</string>
     <string name="common_close">Close</string>
+    <string name="common_show_all_apps">Show All Apps</string>
     <string name="common_custom">Custom</string>
     <string name="common_error_unable_to_open">Unable to open %1$s</string>
     <string name="common_most_used">Most Used</string>
+    <string name="common_all_apps">All Apps</string>
     <string name="common_nickname">Nickname</string>
     <string name="common_search">Search</string>
     <string name="common_theme_dark">Dark</string>

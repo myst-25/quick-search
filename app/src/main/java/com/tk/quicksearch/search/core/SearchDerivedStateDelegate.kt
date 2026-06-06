@@ -124,15 +124,7 @@ internal class SearchDerivedStateDelegate(
             } else {
                 emptyList()
             }
-        val mostUsedApps =
-            if (suggestionsEnabled && hasUsagePermission) {
-                appSuggestionSelector.selectMostUsedApps(
-                    apps = visibleAppList,
-                    limit = getGridItemCount(),
-                )
-            } else {
-                emptyList()
-            }
+        val mostUsedApps = emptyList<AppInfo>()
         val currentResultsState = resultsStateProvider()
         val recents =
             stabilizeVisibleSuggestions(

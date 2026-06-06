@@ -148,6 +148,7 @@ private fun renderAppsSection(
     if (context.shouldRenderApps && appsParams.hasAppResults && appsParams.apps.isNotEmpty()) {
         AppGridView(
             apps = appsParams.apps,
+            allApps = appsParams.allApps,
             pinnedAndRecentApps = appsParams.pinnedAndRecentApps,
             pinnedApps = appsParams.pinnedApps,
             newOrUpdatedApps = appsParams.newOrUpdatedApps,

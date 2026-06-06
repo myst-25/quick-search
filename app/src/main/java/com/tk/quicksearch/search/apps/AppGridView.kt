@@ -167,6 +167,7 @@ private data class AppState(
 @Composable
 fun AppGridView(
         apps: List<AppInfo>,
+        allApps: List<AppInfo>,
         pinnedAndRecentApps: List<AppInfo>,
         pinnedApps: List<AppInfo>,
         newOrUpdatedApps: List<AppInfo>,
@@ -209,10 +210,11 @@ fun AppGridView(
         onGridAppeared: (() -> Unit)? = null,
         suppressSuggestionsEnterAnimation: Boolean = false,
 ) {
+    var isAllAppsExpanded by remember { mutableStateOf(false) }
     val pinnedTitle = stringResource(R.string.app_suggestions_tab_pinned)
     val recentsTitle = stringResource(R.string.app_suggestions_tab_recent)
     val newUpdatedTitle = stringResource(R.string.app_suggestions_tab_new_updated)
-    val mostUsedTitle = stringResource(R.string.common_most_used)
+    val allAppsTitle = "All Apps"
     val suggestionTabs =
             remember(
                     hasUsagePermission,
@@ -220,11 +222,13 @@ fun AppGridView(
                     newUpdatedTitle,
                     pinnedTitle,
                     recentsTitle,
-                    mostUsedTitle,
+                    recentsTitle,
+                    allAppsTitle,
                     pinnedApps,
                     newOrUpdatedApps,
                     pinnedAndRecentApps,
-                    mostUsedApps,
+                    apps,
+                    allApps,
                     enabledSuggestionTabs,
             ) {
                 if (isSearching) return@remember emptyList()
@@ -239,8 +243,8 @@ fun AppGridView(
                         if (AppSuggestionTabType.RECENTS in enabledSuggestionTabs) {
                             add(AppSuggestionTab(AppSuggestionTabType.RECENTS, recentsTitle, pinnedAndRecentApps))
                         }
-                        if (AppSuggestionTabType.MOST_USED in enabledSuggestionTabs) {
-                            add(AppSuggestionTab(AppSuggestionTabType.MOST_USED, mostUsedTitle, mostUsedApps))
+                        if (AppSuggestionTabType.ALL_APPS in enabledSuggestionTabs) {
+                            add(AppSuggestionTab(AppSuggestionTabType.ALL_APPS, allAppsTitle, allApps))
                         }
                     }
                 } else {
@@ -277,12 +281,14 @@ fun AppGridView(
                 val selectedTab = suggestionTabs[selectedSuggestionTabIndex]
                 if (selectedTab.type == AppSuggestionTabType.PINNED) {
                     selectedTab.apps
+                } else if (selectedTab.type == AppSuggestionTabType.ALL_APPS) {
+                    if (isAllAppsExpanded) selectedTab.apps else selectedTab.apps.take(8)
                 } else {
-                fillSuggestionGridApps(
-                        primaryApps = selectedTab.apps,
-                        fallbackApps = suggestionFallbackApps,
-                        minItems = minSuggestionGridItems,
-                )
+                    fillSuggestionGridApps(
+                            primaryApps = selectedTab.apps,
+                            fallbackApps = suggestionFallbackApps,
+                            minItems = minSuggestionGridItems,
+                    )
                 }
             } else {
                 if (isSearching) apps else emptyList()
@@ -430,79 +436,105 @@ fun AppGridView(
                             label = "appSuggestionTabSlide",
                     ) { selectedIndex ->
                         val selectedTab = suggestionTabs[selectedIndex]
-                        AppGrid(
-                                apps =
-                                        if (selectedTab.type == AppSuggestionTabType.PINNED) {
-                                            selectedTab.apps
-                                        } else {
-                                            fillSuggestionGridApps(
-                                                    primaryApps = selectedTab.apps,
-                                                    fallbackApps = suggestionFallbackApps,
-                                                    minItems = minSuggestionGridItems,
-                                            )
-                                        },
-                                isSearching = isSearching,
-                                onAppClick = onAppClick,
-                                onAppInfoClick = onAppInfoClick,
-                                onUninstallClick = onUninstallClick,
-                                onHideApp = onHideApp,
-                                onPinApp = onPinApp,
-                                onUnpinApp = onUnpinApp,
-                                onReorderPinnedApps = onReorderPinnedApps,
-                                onNicknameClick = onNicknameClick,
-                                onTriggerClick = onTriggerClick,
-                                getAppNickname = getAppNickname,
-                                getAppTrigger = getAppTrigger,
-                                pinnedPackageNames = pinnedPackageNames,
-                                shortcutsByPackage = shortcutsByPackage,
-                                rowCount = rowCount,
-                                phoneColumnOverride = phoneColumnOverride,
-                                appIconSizeStep = appIconSizeStep,
-                                iconPackPackage = iconPackPackage,
-                                showAppLabels = showAppLabels,
-                                oneHandedMode = oneHandedMode,
-                                isOverlayPresentation = isOverlayPresentation,
-                                predictedTarget = predictedTarget,
-                                suppressTopResultIndicator = suppressTopResultIndicator,
-                                appIconShape = appIconShape,
-                                themedIconsEnabled = themedIconsEnabled,
-                                showWallpaperBackground = showWallpaperBackground,
-                                reorderPinnedApps = selectedTab.type == AppSuggestionTabType.PINNED,
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            if (selectedTab.type == AppSuggestionTabType.ALL_APPS) {
+                                Spacer(Modifier.height(8.dp))
+                                androidx.compose.material3.TextButton(onClick = { isAllAppsExpanded = !isAllAppsExpanded }) {
+                                    Text(
+                                        text = if (isAllAppsExpanded) stringResource(R.string.common_close) else stringResource(R.string.common_show_all_apps),
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                                Spacer(Modifier.height(8.dp))
+                            }
+                            AppGrid(
+                                        apps =
+                                                if (selectedTab.type == AppSuggestionTabType.PINNED) {
+                                                    selectedTab.apps
+                                                } else if (selectedTab.type == AppSuggestionTabType.ALL_APPS) {
+                                                    if (isAllAppsExpanded) selectedTab.apps else selectedTab.apps.take(8)
+                                                } else {
+                                                    fillSuggestionGridApps(
+                                                            primaryApps = selectedTab.apps,
+                                                            fallbackApps = suggestionFallbackApps,
+                                                            minItems = minSuggestionGridItems,
+                                                    )
+                                                },
+                                        isSearching = isSearching,
+                                        onAppClick = onAppClick,
+                                        onAppInfoClick = onAppInfoClick,
+                                        onUninstallClick = onUninstallClick,
+                                        onHideApp = onHideApp,
+                                        onPinApp = onPinApp,
+                                        onUnpinApp = onUnpinApp,
+                                        onReorderPinnedApps = onReorderPinnedApps,
+                                        onNicknameClick = onNicknameClick,
+                                        onTriggerClick = onTriggerClick,
+                                        getAppNickname = getAppNickname,
+                                        getAppTrigger = getAppTrigger,
+                                        pinnedPackageNames = pinnedPackageNames,
+                                        shortcutsByPackage = shortcutsByPackage,
+                                        rowCount = if (isAllAppsExpanded && selectedTab.type == AppSuggestionTabType.ALL_APPS) 1000 else rowCount,
+                                        phoneColumnOverride = phoneColumnOverride,
+                                        appIconSizeStep = appIconSizeStep,
+                                        iconPackPackage = iconPackPackage,
+                                        showAppLabels = showAppLabels,
+                                        oneHandedMode = oneHandedMode,
+                                        isOverlayPresentation = isOverlayPresentation,
+                                        predictedTarget = predictedTarget,
+                                        suppressTopResultIndicator = suppressTopResultIndicator,
+                                        appIconShape = appIconShape,
+                                        themedIconsEnabled = themedIconsEnabled,
+                                        showWallpaperBackground = showWallpaperBackground,
+                                        reorderPinnedApps = selectedTab.type == AppSuggestionTabType.PINNED,
+                                )
+                            }
                     }
                 } else {
-                    AppGrid(
-                            apps = activeApps,
-                            isSearching = isSearching,
-                            onAppClick = onAppClick,
-                            onAppInfoClick = onAppInfoClick,
-                            onUninstallClick = onUninstallClick,
-                            onHideApp = onHideApp,
-                            onPinApp = onPinApp,
-                            onUnpinApp = onUnpinApp,
-                            onReorderPinnedApps = onReorderPinnedApps,
-                            onNicknameClick = onNicknameClick,
-                            onTriggerClick = onTriggerClick,
-                            getAppNickname = getAppNickname,
-                            getAppTrigger = getAppTrigger,
-                            pinnedPackageNames = pinnedPackageNames,
-                            shortcutsByPackage = shortcutsByPackage,
-                            rowCount = rowCount,
-                            phoneColumnOverride = phoneColumnOverride,
-                            appIconSizeStep = appIconSizeStep,
-                            iconPackPackage = iconPackPackage,
-                            showAppLabels = showAppLabels,
-                            oneHandedMode = oneHandedMode,
-                            isOverlayPresentation = isOverlayPresentation,
-                            predictedTarget = predictedTarget,
-                            suppressTopResultIndicator = suppressTopResultIndicator,
-                            appIconShape = appIconShape,
-                            themedIconsEnabled = themedIconsEnabled,
-                            showWallpaperBackground = showWallpaperBackground,
-                            reorderPinnedApps =
-                                    suggestionTabs.getOrNull(selectedSuggestionTabIndex)?.type ==
-                                            AppSuggestionTabType.PINNED,
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (suggestionTabs.getOrNull(selectedSuggestionTabIndex)?.type == AppSuggestionTabType.ALL_APPS) {
+                            Spacer(Modifier.height(8.dp))
+                            androidx.compose.material3.TextButton(onClick = { isAllAppsExpanded = !isAllAppsExpanded }) {
+                                Text(
+                                    text = if (isAllAppsExpanded) stringResource(R.string.common_close) else stringResource(R.string.common_show_all_apps),
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                            Spacer(Modifier.height(8.dp))
+                        }
+                        AppGrid(
+                                    apps = activeApps,
+                                    isSearching = isSearching,
+                                    onAppClick = onAppClick,
+                                    onAppInfoClick = onAppInfoClick,
+                                    onUninstallClick = onUninstallClick,
+                                    onHideApp = onHideApp,
+                                    onPinApp = onPinApp,
+                                    onUnpinApp = onUnpinApp,
+                                    onReorderPinnedApps = onReorderPinnedApps,
+                                    onNicknameClick = onNicknameClick,
+                                    onTriggerClick = onTriggerClick,
+                                    getAppNickname = getAppNickname,
+                                    getAppTrigger = getAppTrigger,
+                                    pinnedPackageNames = pinnedPackageNames,
+                                    shortcutsByPackage = shortcutsByPackage,
+                                    rowCount = if (isAllAppsExpanded) 1000 else rowCount,
+                                    phoneColumnOverride = phoneColumnOverride,
+                                    appIconSizeStep = appIconSizeStep,
+                                    iconPackPackage = iconPackPackage,
+                                    showAppLabels = showAppLabels,
+                                    oneHandedMode = oneHandedMode,
+                                    isOverlayPresentation = isOverlayPresentation,
+                                    predictedTarget = predictedTarget,
+                                    suppressTopResultIndicator = suppressTopResultIndicator,
+                                    appIconShape = appIconShape,
+                                    themedIconsEnabled = themedIconsEnabled,
+                                    showWallpaperBackground = showWallpaperBackground,
+                                    reorderPinnedApps =
+                                            suggestionTabs.getOrNull(selectedSuggestionTabIndex)?.type ==
+                                                    AppSuggestionTabType.PINNED,
+                            )
+                    }
                 }
             }
         }
