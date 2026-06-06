@@ -1,8 +1,4 @@
-- Support for more languages: Telugu, Hindi, Spanish, Russian, Italian, Turkish, French, German, Simple Chinese, Brazilian-Portuguese, Greek and Arabic
-- File previews for PDFs and Images
-- Reorder pinned items.
-- Change app icon size
-- Show/Hide search hints & settings icon in the search bar
-- Show/Hide app suggestion tabs
-- Launcher optimisations
-- UI enhancements & bug fixes
+- All Apps view: browse all your installed apps in the home tab
+- Show All Apps button to expand the grid beyond the initial 8 apps
+- Search now shows all matching apps (like MIUI / OnePlus launchers)
+- UI bug fixes and improvements

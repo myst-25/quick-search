@@ -14,8 +14,8 @@ android {
         applicationId = "com.myst25.quicksearch"
         minSdk = 24
         targetSdk = 36
-        versionCode = 65
-        versionName = "3.6"
+        versionCode = 66
+        versionName = "3.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
