@@ -1,31 +1,25 @@
-# Quick Search
+# Quick Search Pro
 
-A fast & powerful Android app that lets you search across **apps, app shortcuts, contacts, calendar events, device files, device settings, app settings, and the web**, plus access tools like **calculator, unit converter, etc**—all from a single search bar. Built with Kotlin and Jetpack Compose using Material 3 design.
+> **Based on [Quick Search](https://github.com/teja2495/quick-search) by [Teja Karlapudi](https://github.com/teja2495)** — all credit for the original app goes to them. This is a personal fork with custom enhancements maintained by [myst25](https://github.com/myst-25).
 
-<a href="https://play.google.com/store/apps/details?id=com.tk.quicksearch"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80"></a>
-<a href="https://f-droid.org/en/packages/com.tk.quicksearch/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80"></a>
-<a href="https://github.com/teja2495/quick-search/releases/latest"><img src="https://github.com/user-attachments/assets/5d36bf7f-3386-4b0e-b7e1-892daba01343" alt="Get it on GitHub" height="80"></a>
+A fast & powerful Android launcher/search app that lets you search across **apps, app shortcuts, contacts, calendar events, device files, device settings, app settings, and the web**, plus access tools like **calculator, unit converter, and AI search**—all from a single search bar. Built with Kotlin and Jetpack Compose using Material 3 design.
+
+<a href="https://github.com/myst-25/quick-search/releases/latest"><img src="https://github.com/user-attachments/assets/5d36bf7f-3386-4b0e-b7e1-892daba01343" alt="Get it on GitHub" height="80"></a>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## 📸 Screenshots
-
-| | | |
-|---|---|---|
-| <img src="screenshots/image1.png" width="280" alt="Screenshot 1"> | <img src="screenshots/image2.png" width="280" alt="Screenshot 2"> | <img src="screenshots/image3.png" width="280" alt="Screenshot 3"> |
-| <img src="screenshots/image5.png" width="280" alt="Screenshot 5"> | <img src="screenshots/image6.png" width="280" alt="Screenshot 6"> | <img src="screenshots/image7.png" width="280" alt="Screenshot 7"> |
 
 ## ✨ Key Features
 
 ### 🔍 Unified Search
 - **Apps**: Search and launch installed applications with smart ranking. App search ignores typos and allows abbreviations. Long press apps to access their shortcuts (if available).
+- **All Apps View**: Browse all installed apps in a grid, with a quick "Show All Apps" toggle to expand beyond the initial 8 — just like MIUI or OnePlus launchers.
 - **App Shortcuts**: Find and launch app shortcuts (including custom deep links and search/browser shortcuts) alongside app results.
 - **Contacts**: Find and call/text contacts with multi-number support and integrations such as WhatsApp, Telegram, Signal, Google Meet, and more. Long press contact actions to customize them.
 - **Calendar Events**: Search your calendar events from the search bar.
 - **Notes**: Write notes and search them from the search bar. Swipe left on the home screen for a quick note.
 - **Files**: Search device files and folders (images, videos, documents, etc.)
 - **Device Settings**: Search Android system settings
-- **App Settings**: Find and open Quick Search app settings directly from the search bar
+- **App Settings**: Find and open Quick Search Pro app settings directly from the search bar
 - **Top Matches**: Turn this on to see the top result for your query across all categories. You can also enable or disable categories and adjust their priority.
 - **Web**: Search the web using 25 search engines with customizable shortcuts and web suggestions. Browsers can be added as search engines.
 - **Calculator**: Built-in calculator for math expressions (+, -, *, /, brackets); optional alias to open calculator mode
@@ -33,17 +27,17 @@ A fast & powerful Android app that lets you search across **apps, app shortcuts,
 - **Currency Converter**: Convert between currencies with live exchange rates directly from the search bar
 - **World Clock**: Check the current time across different time zones by searching for city names
 - **Date & Time**: Natural-language date parsing, differences, offsets, and time arithmetic from the search bar (optional alias)
-- **AI Search**: AI search with AI-powered answers using  models and optional personal context
+- **AI Search**: AI search with AI-powered answers using models and optional personal context
 - **AI Providers**: Configure API keys for multiple providers - Gemini, OpenAI, Claude, Groq - at the same time, plus custom AI providers using any OpenAI-compatible API
 - **Custom AI Tools**: Create your own AI tools (requires an API key)
-- **App Suggestions**: Swipe left or right on the suggestions row to switch between New & Updated, Pinned, and Most Used apps
+- **App Suggestions**: Swipe left or right on the suggestions row to switch between New & Updated, Pinned, and All Apps
 - **Search History**: View search history and swipe left or right in the expanded history to switch between recent queries and recently opened results
 - **Overlay Mode**: Enable to make the search bar appear over other apps, anywhere—changes how you access search from any screen
 - **Home Screen Widget**: Search widget and custom buttons widget with extensive customization options
 - **Launch Options**: Widget, Quick Settings Tile, Digital Assistant & set as Launcher
 - **Triggers**: Long-press any result to set a trigger. The app opens it automatically when you type the trigger word and press space.
 
-### 🎨 Customization & New Features
+### 🎨 Customization & Features
 - **App Themes**: Choose from multiple visual themes (Mono, Forest, Aurora, Sunset) for the app's appearance
 - **Material You**: Use your device's color palette from Material You for the app's theme and accent colors
 - **Bottom Search Bar**: Option for bottom-positioned search bar for improved accessibility
@@ -51,7 +45,7 @@ A fast & powerful Android app that lets you search across **apps, app shortcuts,
 - **Custom Backgrounds**: Select any picture from your device for the app background, with transparency and blur controls
 - **App Management**: View app details or bulk uninstall apps from search results settings
 - **Shortcut Management**: Enable, disable, or add custom shortcuts including search queries, URLs, and app activities
-- **Import/Export Settings**: Backup and restore your Quick Search configuration and preferences
+- **Import/Export Settings**: Backup and restore your Quick Search Pro configuration and preferences
 
 ### Search Shortcuts
 Configure custom keyboard shortcuts for search engines and add them at the start of a query to quickly trigger the respective search engine:
@@ -82,29 +76,28 @@ Enable AI-powered answers by:
 - Android 7.0 (API 24) or higher
 - Target SDK: Android 15 (API 36)
 
+### Download
+- **APK Release**: Download the latest APK from the [Releases](https://github.com/myst-25/quick-search/releases) page
+
 ### Build from Source
 ```bash
 # Clone the repository
-git clone https://github.com/teja2495/quick-search.git
+git clone https://github.com/myst-25/quick-search.git
 cd quick-search
 
-# Google Play / GitHub releases (includes Play in-app review & updates)
+# Standard release build (recommended)
 ./gradlew assembleStandardRelease
 
 # F-Droid build (no Google Play libraries bundled)
 ./gradlew assembleFdroidRelease
+
+# Debug build
+./gradlew assembleStandardDebug
 ```
-
-See [docs/FDROID.md](docs/FDROID.md) for publishing to F-Droid.
-
-### Download
-- **Google Play Store**: Get the app from [Google Play Store](https://play.google.com/store/apps/details?id=com.tk.quicksearch) for automatic updates
-- **F-Droid**: Install from [F-Droid](https://f-droid.org/en/packages/com.tk.quicksearch/) for repository-based updates
-- **APK Release**: Download the latest APK from the [Releases](https://github.com/teja2495/quick-search/releases) page
 
 ## 🛡️ Permissions & Privacy
 
-Quick Search prioritizes your privacy. All permissions are optional, only used to unlock additional features. All search processing happens locally on your device. For detailed information, see our [Privacy Policy](PRIVACY_POLICY.md).
+Quick Search Pro prioritizes your privacy. All permissions are optional, only used to unlock additional features. All search processing happens locally on your device.
 
 **Key Points:**
 - No ads or analytics
@@ -120,71 +113,53 @@ Built with modern Android development practices:
 - **UI**: Jetpack Compose with Material 3 (BOM 2025.12.01)
 - **Architecture**: MVVM with ViewModels and StateFlow (unidirectional data flow)
 - **State Management**: Single source of truth with sealed classes for type-safe states
-- **Persistence**: SharedPreferences with encryption for sensitive data (Gemini API keys)
+- **Persistence**: SharedPreferences with encryption for sensitive data (API keys)
 - **Widgets**: Jetpack Glance App Widget framework
-- **Build System**: Gradle Kotlin DSL (8.12.3) with version catalogs
+- **Build System**: Gradle Kotlin DSL with version catalogs
 - **Min SDK**: 24 (Android 7.0) | **Target SDK**: 36 (Android 15)
 
 ### Project Structure
 ```
-app/src/main/java/com/tk/quicksearch/
+app/src/main/java/com/myst25/quicksearch/
 ├── app/                    # Application entry point and app-level handlers
 ├── navigation/             # Navigation management with animated transitions
 ├── shared/                 # Shared components and utilities
 │   ├── ui/                 # Shared UI components and Material 3 theming
-│   │   ├── components/     # Reusable UI components
-│   │   └── theme/          # Theming, colors, and design tokens
 │   └── util/               # Shared utility functions
 ├── search/                 # Main search functionality
-│   ├── models/             # Data models (AppInfo, ContactInfo, DeviceFile, etc.)
-│   ├── data/               # Data layer with repositories and preferences
 │   ├── core/               # SearchViewModel, state management, unified search
 │   ├── apps/               # App search, icons, and management
-│   ├── appShortcuts/       # App shortcut search and actions
 │   ├── contacts/           # Contact search with messaging integrations
 │   ├── files/              # File search and management
 │   ├── deviceSettings/     # Device settings search
-│   ├── searchScreen/       # Main search UI and layout orchestration
-│   ├── overlay/            # Overlay mode (search over other apps)
-│   ├── webSuggestions/     # Web search suggestions
-│   ├── fuzzy/              # Fuzzy search engine
-│   ├── searchHistory/      # Recent items tracking and display
-│   └── common/             # Shared utilities and handlers
+│   └── searchScreen/       # Main search UI and layout orchestration
 ├── searchEngines/          # Search engine integration and management
-│   ├── compact/            # Compact mode UI
-│   ├── inline/             # Inline mode UI
-│   └── shared/             # Shared search engine components
-├── tools/                  # Specialized tools and utilities
-│   ├── calculator/         # Calculator functionality
-│   └── aiSearch/            # AI Search (Gemini API integration)
-├── settings/               # Settings screens (restructured)
-│   ├── appearanceSettings/ # Appearance and theme settings
-│   ├── appShortcutsSettings/# App shortcuts configuration
-│   ├── searchEngineSettings/# Search engine settings
-│   ├── navigation/         # Settings navigation
-│   └── shared/             # Shared settings components
+├── tools/                  # Built-in tools (calculator, AI search, etc.)
+├── settings/               # Settings screens
 ├── onboarding/             # First-launch setup flow
 ├── widgets/                # Home screen widgets (Glance framework)
-├── tile/                   # Quick Settings tile service
-└── util/                   # Legacy utility functions (most moved to shared/util/)
+└── overlay/                # Overlay mode (search over other apps)
 ```
 
-### Key Architectural Patterns
-- **Feature-based organization**: Code organized by feature domain
-- **Repository pattern**: Data layer abstraction
-- **Sealed classes**: Type-safe state management
-- **Three-phase initialization**: Optimized startup performance
-- **Modular preferences**: Specialized preference management classes
+## 🤝 Contributing
 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request at [github.com/myst-25/quick-search](https://github.com/myst-25/quick-search)
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+Original work Copyright (c) 2025 [Teja Karlapudi](https://github.com/teja2495).
+Modifications Copyright (c) 2025 [myst25](https://github.com/myst-25).
+
 ## 📞 Contact
 
-- **Email**: tejakarlapudi.apps@gmail.com
-- **Issues**: [GitHub Issues](https://github.com/teja2495/quick-search/issues)
+- **Issues**: [GitHub Issues](https://github.com/myst-25/quick-search/issues)
+- **Developer**: [myst25 on GitHub](https://github.com/myst-25)
 
 ---
 
