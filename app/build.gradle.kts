@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.oss.licenses)
+    // The oss-licenses plugin must be applied selectively to avoid failing F-Droid builds
+    // We apply it later if not building fdroid
     id("kotlin-parcelize")
 }
 
@@ -100,10 +101,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
-
-// Gradle 8.13+ validates implicit task input/output dependencies.
-// The OSS licenses plugin’s cleanup task consumes the generated dependencies file,
-// so we explicitly wire the task dependency to keep builds deterministic.
-tasks.matching { it.name == "debugOssLicensesCleanUp" }.configureEach {
-    dependsOn("debugOssDependencyTask")
+// Conditionally apply OSS licenses plugin and dependency for standard builds
+val isFdroidBuild = gradle.startParameter.taskNames.any { it.contains("fdroid", ignoreCase = true) }
+if (!isFdroidBuild) {
+    apply(plugin = "com.google.android.gms.oss-licenses-plugin")
+    dependencies {
+        "implementation"(libs.play.services.oss.licenses)
+    }
+    
+    // Gradle 8.13+ validates implicit task input/output dependencies.
+    // The OSS licenses plugin’s cleanup task consumes the generated dependencies file,
+    // so we explicitly wire the task dependency to keep builds deterministic.
+    tasks.matching { it.name == "debugOssLicensesCleanUp" }.configureEach {
+        dependsOn("debugOssDependencyTask")
+    }
 }

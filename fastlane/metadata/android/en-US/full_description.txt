@@ -1,20 +1,26 @@
-Quick Search is a fast Android launcher and search app that unifies results from apps, app shortcuts, contacts, calendar events, files, device settings, app settings, and the web—plus built-in tools like calculator, unit converter, currency converter, and optional AI search.
+A fast & powerful Android launcher/search app that lets you search across apps, app shortcuts, contacts, calendar events, device files, device settings, app settings, and the web, plus access tools like calculator, unit converter, and AI search—all from a single search bar. Built with Kotlin and Jetpack Compose using Material 3 design.
 
-<b>Search everything</b>
-• Apps and shortcuts with smart ranking and typo tolerance
-• Contacts with call, text, and messaging integrations
-• Calendar events, notes, files, and folders
-• Android system settings and Quick Search settings
-• 25+ web search engines with customizable shortcuts
+### Key Features
 
-<b>Tools from the search bar</b>
-• Calculator, unit converter, currency rates, world clock, date math
-• Optional AI answers when you add your own API keys (Gemini, OpenAI, Claude, Groq, or compatible APIs)
+* **Apps**: Search and launch installed applications with smart ranking. App search ignores typos and allows abbreviations.
+* **All Apps View**: Browse all installed apps in a grid, with a quick "Show All Apps" toggle.
+* **Contacts**: Find and call/text contacts with multi-number support and integrations.
+* **Calendar Events**: Search your calendar events from the search bar.
+* **Files**: Search device files and folders.
+* **Device & App Settings**: Search Android system settings and Quick Search Pro settings.
+* **Top Matches**: Turn this on to see the top result for your query across all categories.
+* **Web**: Search the web using 25 search engines with customizable shortcuts.
+* **Built-in Tools**: Calculator, unit converter, currency converter, world clock, and date/time calculator.
+* **AI Search**: Get AI-powered answers using models of your choice (requires your own API key).
+* **Overlay Mode**: Make the search bar appear over other apps, anywhere.
+* **Widgets**: Home screen search widget and custom buttons widget.
 
-<b>Customize your experience</b>
-• Overlay mode, home screen widgets, Quick Settings tile, or default launcher
-• Themes, Material You colors, wallpapers, bottom search bar, and font size
-• Import/export settings and granular permission controls
+### Privacy First
+Quick Search Pro prioritizes your privacy. All permissions are optional, only used to unlock additional features. All search processing happens locally on your device.
 
-<b>Privacy</b>
-Search runs on your device. There are no ads or analytics. Network access is used only for features you enable (web search, optional AI, currency rates).
+* No ads or analytics
+* Encrypted storage for API keys
+* Granular permission controls
+* Local data processing
+
+Based on the original Quick Search app by Teja Karlapudi.

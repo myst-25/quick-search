@@ -1,0 +1,4 @@
+- All Apps view: browse all your installed apps in the home tab
+- Show All Apps button to expand the grid beyond the initial 8 apps
+- Search now shows all matching apps (like MIUI / OnePlus launchers)
+- UI bug fixes and improvements
